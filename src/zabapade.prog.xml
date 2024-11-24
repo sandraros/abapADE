@@ -5,6 +5,7 @@
    <PROGDIR>
     <NAME>ZABAPADE</NAME>
     <DBAPL>S</DBAPL>
+    <DBNA>D$</DBNA>
     <SUBC>1</SUBC>
     <FIXPT>X</FIXPT>
     <LDBNAME>D$S</LDBNAME>
@@ -52,7 +53,20 @@
        <LINE>014</LINE>
        <COLUMN>001</COLUMN>
        <LENGTH>255</LENGTH>
-       <HEIGHT>181</HEIGHT>
+       <HEIGHT>050</HEIGHT>
+       <C_RESIZE_V>X</C_RESIZE_V>
+       <C_RESIZE_H>X</C_RESIZE_H>
+       <C_LINE_MIN>010</C_LINE_MIN>
+       <C_COLN_MIN>060</C_COLN_MIN>
+      </RPY_DYCATT>
+      <RPY_DYCATT>
+       <TYPE>CUST_CTRL</TYPE>
+       <NAME>COLUMN_SUGGESTIONS</NAME>
+       <ELEMENT_OF>SCREEN</ELEMENT_OF>
+       <LINE>065</LINE>
+       <COLUMN>001</COLUMN>
+       <LENGTH>255</LENGTH>
+       <HEIGHT>050</HEIGHT>
        <C_RESIZE_V>X</C_RESIZE_V>
        <C_RESIZE_H>X</C_RESIZE_H>
        <C_LINE_MIN>010</C_LINE_MIN>
@@ -89,8 +103,8 @@
        <FORMAT>CHAR</FORMAT>
        <FROM_DICT>X</FROM_DICT>
        <PARAM_ID>DTB</PARAM_ID>
-       <INPUT_FLD>X</INPUT_FLD>
        <OUTPUT_FLD>X</OUTPUT_FLD>
+       <REQU_ENTRY>N</REQU_ENTRY>
       </RPY_DYFATC>
       <RPY_DYFATC>
        <CONT_TYPE>SCREEN</CONT_TYPE>
@@ -538,6 +552,15 @@
     </STA>
     <FUN>
      <RSMPE_FUNT>
+      <CODE>ACTIVATE</CODE>
+      <TEXTNO>001</TEXTNO>
+      <TEXT_TYPE>S</TEXT_TYPE>
+      <TEXT_NAME>ICON_ACTIVATE</TEXT_NAME>
+      <ICON_ID>@3C@</ICON_ID>
+      <FUN_TEXT>Activate</FUN_TEXT>
+      <ICON_TEXT>Activate</ICON_TEXT>
+     </RSMPE_FUNT>
+     <RSMPE_FUNT>
       <CODE>QUIT</CODE>
       <TEXTNO>001</TEXTNO>
       <TEXT_TYPE>S</TEXT_TYPE>
@@ -584,6 +607,7 @@
       <TEXT_NAME>ICON_BW_SUGGEST_VALUE</TEXT_NAME>
       <ICON_ID>@F6@</ICON_ID>
       <FUN_TEXT>Suggest data elements</FUN_TEXT>
+      <ICON_TEXT>Suggest data elements, etc.</ICON_TEXT>
      </RSMPE_FUNT>
     </FUN>
     <BUT>
@@ -604,6 +628,12 @@
       <CODE>0001</CODE>
       <NO>03</NO>
       <PFNO>18</PFNO>
+     </RSMPE_BUT>
+     <RSMPE_BUT>
+      <PFK_CODE>000001</PFK_CODE>
+      <CODE>0001</CODE>
+      <NO>04</NO>
+      <PFNO>27</PFNO>
      </RSMPE_BUT>
     </BUT>
     <PFK>
@@ -649,8 +679,18 @@
       <FUNCODE>SHOW_HIDE_DDIC_ATTR</FUNCODE>
       <FUNNO>001</FUNNO>
      </RSMPE_PFK>
+     <RSMPE_PFK>
+      <CODE>000001</CODE>
+      <PFNO>27</PFNO>
+      <FUNCODE>ACTIVATE</FUNCODE>
+      <FUNNO>001</FUNNO>
+     </RSMPE_PFK>
     </PFK>
     <SET>
+     <RSMPE_STAF>
+      <STATUS>STATUS_0100</STATUS>
+      <FUNCTION>ACTIVATE</FUNCTION>
+     </RSMPE_STAF>
      <RSMPE_STAF>
       <STATUS>STATUS_0100</STATUS>
       <FUNCTION>QUIT</FUNCTION>
@@ -697,8 +737,8 @@
    <TPOOL>
     <item>
      <ID>R</ID>
-     <ENTRY>Editor of Tables and Structures</ENTRY>
-     <LENGTH>31</LENGTH>
+     <ENTRY>ABAP Dictionary Editor: Maintain Tables and Structures</ENTRY>
+     <LENGTH>54</LENGTH>
     </item>
     <item>
      <ID>S</ID>
