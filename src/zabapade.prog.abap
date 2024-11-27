@@ -5,19 +5,6 @@
 *&---------------------------------------------------------------------*
 REPORT zabapade.
 
-" Name
-" Description
-" Type    Table, Structure, Append
-" Appended table/structure name
-" Transport request
-" Package
-" Table contents  Transactional, Customizing, Master data
-" Maintenance via SE16(N)/SM30    SE16, SM30, No
-" Edit allowed in production? Yes, No (without transport request)
-"
-" Search for the data elements and domains which best correspond to the criteria entered and propose them,
-" they are included in the ALV Grid, there is a check mark which allows you to choose only one suggestion per column entered
-
 CLASS lcl_app DEFINITION DEFERRED.
 
 CONSTANTS:
@@ -64,7 +51,8 @@ ENDMODULE.
 CLASS ltc_app DEFINITION DEFERRED.
 
 CLASS lcl_app DEFINITION
-    FRIENDS ltc_app.
+  FRIENDS ltc_app.
+
   PUBLIC SECTION.
     CLASS-METHODS class_constructor.
 
@@ -75,9 +63,6 @@ CLASS lcl_app DEFINITION
   PRIVATE SECTION.
     TYPES:
       BEGIN OF ts_alv_table_column,
-        suggestion_id     TYPE i,
-        "! icon_checked or icon_space
-        selected          TYPE icon_l2,
         keyflag           TYPE dd03l-keyflag,
         fieldname         TYPE dd03l-fieldname,
         datatype          TYPE dd01l-datatype,
@@ -134,142 +119,18 @@ CLASS lcl_app DEFINITION
       END OF ts_alv_table_column.
     TYPES tt_alv_table_column TYPE STANDARD TABLE OF ts_alv_table_column WITH EMPTY KEY.
 
-    TYPES:
-      BEGIN OF ts_dd02l,
-        tabname  TYPE dd02l-tabname,
-        tabclass TYPE dd02l-tabclass,
-        buffered TYPE dd02l-buffered,
-        mainflag TYPE dd02l-mainflag,
-        contflag TYPE dd02l-contflag,
-        exclass  TYPE dd02l-exclass,
-      END OF ts_dd02l.
-    TYPES:
-      BEGIN OF ts_dd09l,
-        tabname TYPE dd09l-tabname,
-        tabart  TYPE dd09l-tabart,
-      END OF ts_dd09l.
-    TYPES:
-      BEGIN OF ts_dd03l,
-        tabname    TYPE dd03l-tabname,
-        position   TYPE dd03l-position,
-        fieldname  TYPE dd03l-fieldname,
-        keyflag    TYPE dd03l-keyflag,
-        rollname   TYPE dd03l-rollname,
-        reftable   TYPE dd03l-reftable,
-        reffield   TYPE dd03l-reffield,
-        checktable TYPE dd03l-checktable,
-        notnull    TYPE dd03l-notnull,
-        datatype   TYPE dd03l-datatype,
-        leng       TYPE dd03l-leng,
-        decimals   TYPE dd03l-decimals,
-      END OF ts_dd03l.
-    TYPES tt_dd03l TYPE SORTED TABLE OF ts_dd03l WITH UNIQUE KEY tabname position.
-    TYPES:
-      BEGIN OF ts_tabname_fieldname,
-        tabname   TYPE dd03l-tabname,
-        fieldname TYPE dd03l-fieldname,
-      END OF ts_tabname_fieldname.
-    TYPES tt_tabname_fieldname TYPE SORTED TABLE OF ts_tabname_fieldname WITH UNIQUE KEY tabname fieldname.
-    TYPES:
-      BEGIN OF ts_dd03t,
-        fieldname TYPE dd03t-fieldname,
-        ddtext    TYPE dd03t-ddtext,
-      END OF ts_dd03t.
-    TYPES tt_dd03t    TYPE SORTED TABLE OF ts_dd03t WITH UNIQUE KEY fieldname.
-    TYPES tt_rollname TYPE SORTED TABLE OF dd04l-rollname WITH UNIQUE KEY table_line.
-    TYPES:
-      BEGIN OF ts_dd04l,
-        rollname  TYPE dd04l-rollname,
-        domname   TYPE dd04l-domname,
-        shlpname  TYPE dd04l-shlpname,
-        shlpfield TYPE dd04l-shlpfield,
-        headlen   TYPE dd04l-headlen,
-        scrlen1   TYPE dd04l-scrlen1,
-        scrlen2   TYPE dd04l-scrlen2,
-        scrlen3   TYPE dd04l-scrlen3,
-        datatype  TYPE dd04l-datatype,
-        leng      TYPE dd04l-leng,
-        decimals  TYPE dd04l-decimals,
-      END OF ts_dd04l.
-    TYPES tt_dd04l TYPE SORTED TABLE OF ts_dd04l WITH UNIQUE KEY rollname.
-    TYPES:
-      BEGIN OF ts_dd04t,
-        rollname  TYPE dd04t-rollname,
-        ddtext    TYPE dd04t-ddtext,
-        reptext   TYPE dd04t-reptext,
-        scrtext_s TYPE dd04t-scrtext_s,
-        scrtext_m TYPE dd04t-scrtext_m,
-        scrtext_l TYPE dd04t-scrtext_l,
-      END OF ts_dd04t.
-    TYPES tt_dd04t   TYPE SORTED TABLE OF ts_dd04t WITH UNIQUE KEY rollname.
-    TYPES tt_domname TYPE STANDARD TABLE OF dd01l-domname WITH EMPTY KEY.
-    TYPES:
-      BEGIN OF ts_dd01l,
-        domname     TYPE dd01l-domname,
-        datatype    TYPE dd01l-datatype,
-        leng        TYPE dd01l-leng,
-        decimals    TYPE dd01l-decimals,
-        lowercase   TYPE dd01l-lowercase,
-        convexit    TYPE dd01l-convexit,
-        entitytab   TYPE dd01l-entitytab,
-        outputlen   TYPE dd01l-outputlen,
-        valexi      TYPE dd01l-valexi,
-        signflag    TYPE dd01l-signflag,
-        outputstyle TYPE dd01l-outputstyle,
-      END OF ts_dd01l.
-    TYPES tt_dd01l TYPE SORTED TABLE OF ts_dd01l WITH UNIQUE KEY domname.
+    TYPES tr_string TYPE RANGE OF string.
 
     TYPES:
-      BEGIN OF ts_ddic_fields,
-        t_dd03l TYPE tt_dd03l,
-        t_dd03t TYPE tt_dd03t,
-        t_dd04l TYPE tt_dd04l,
-        t_dd04t TYPE tt_dd04t,
-        t_dd01l TYPE tt_dd01l,
-      END OF ts_ddic_fields.
-
-  types tr_string type range of string.
-    TYPES: BEGIN OF helper_type,
-*         tabname type dd03l-tabname,
-*         position type dd03l-position,
-             fieldname   TYPE dd03l-fieldname,
-             keyflag     TYPE dd03l-keyflag,
-             rollname    TYPE dd03l-rollname,
-             reftable    TYPE dd03l-reftable,
-             reffield    TYPE dd03l-reffield,
-             checktable  TYPE dd03l-checktable,
-             notnull     TYPE dd03l-notnull,
-             datatype    TYPE dd03l-datatype,
-             leng        TYPE dd03l-leng,
-             decimals    TYPE dd03l-decimals,
-             ddtext      TYPE dd03t-ddtext,
-             shlpname    TYPE dd04l-shlpname,
-             shlpfield   TYPE dd04l-shlpfield,
-             headlen     TYPE dd04l-headlen,
-             scrlen1     TYPE dd04l-scrlen1,
-             scrlen2     TYPE dd04l-scrlen2,
-             scrlen3     TYPE dd04l-scrlen3,
-*         ddtext type dd04t-ddtext,
-             reptext     TYPE dd04t-reptext,
-             scrtext_s   TYPE dd04t-scrtext_s,
-             scrtext_m   TYPE dd04t-scrtext_m,
-             scrtext_l   TYPE dd04t-scrtext_l,
-             domname     TYPE dd01l-domname,
-             lowercase   TYPE dd01l-lowercase,
-             convexit    TYPE dd01l-convexit,
-             entitytab   TYPE dd01l-entitytab,
-             outputlen   TYPE dd01l-outputlen,
-             valexi      TYPE dd01l-valexi,
-             signflag    TYPE dd01l-signflag,
-             outputstyle TYPE dd01l-outputstyle,
-           END OF helper_type.
-    TYPES tt_xxxxx    TYPE STANDARD TABLE OF helper_type WITH EMPTY KEY.
-
-types tt_dd03p type STANDARD TABLE OF dd03p with DEFAULT KEY.
-types tt_dd05m type STANDARD TABLE OF dd05m with DEFAULT KEY.
-types tt_dd08v type STANDARD TABLE OF dd08v with DEFAULT KEY.
-types tt_dd35v type STANDARD TABLE OF dd35v with DEFAULT KEY.
-types tt_dd36m type STANDARD TABLE OF dd36m with DEFAULT KEY.
+      BEGIN OF ts_result_ddif_tabl_get,
+        s_dd02v TYPE dd02v,
+        s_dd09l TYPE dd09v,
+        t_dd03p TYPE STANDARD TABLE OF dd03p WITH DEFAULT KEY,
+        t_dd05m TYPE STANDARD TABLE OF dd05m WITH DEFAULT KEY,
+        t_dd08v TYPE STANDARD TABLE OF dd08v WITH DEFAULT KEY,
+        t_dd35v TYPE STANDARD TABLE OF dd35v WITH DEFAULT KEY,
+        t_dd36m TYPE STANDARD TABLE OF dd36m WITH DEFAULT KEY,
+      END OF ts_result_ddif_tabl_get.
 
     TYPES tr_domname  TYPE RANGE OF domname.
     TYPES tr_rollname TYPE RANGE OF rollname.
@@ -283,23 +144,15 @@ types tt_dd36m type STANDARD TABLE OF dd36m with DEFAULT KEY.
     DATA gt_alv_table_column       TYPE tt_alv_table_column.
     DATA gt_alv_column_suggestion  TYPE tt_alv_table_column.
     DATA creation                  TYPE abap_bool.
-    DATA gs_dd02l                  TYPE ts_dd02l.
-    DATA gs_dd09l                  TYPE ts_dd09l.
-    DATA gv_dd02t_ddtext           TYPE dd02t-ddtext.
-    DATA gs_ddic_fields            TYPE ts_ddic_fields.
     DATA gv_current_selection      TYPE i.
     DATA gr_domname                TYPE tr_domname.
     DATA gr_rollname               TYPE tr_rollname.
     DATA gr_tabname                TYPE tr_tabname.
-    DATA: dd05m_tab TYPE lcl_app=>tt_dd05m,
-          dd08v_tab TYPE lcl_app=>tt_dd08v,
-          dd35v_tab TYPE lcl_app=>tt_dd35v,
-          dd36m_tab TYPE lcl_app=>tt_dd36m.
 
     METHODS activate_all.
 
     CLASS-METHODS build_alv_table_from_ddic
-      IMPORTING is_ddic_fields   TYPE ts_ddic_fields
+      IMPORTING it_ddic_fields   TYPE ts_result_ddif_tabl_get-t_dd03p
                 iv_suggestion    TYPE abap_bool DEFAULT abap_false
       RETURNING VALUE(rt_result) TYPE tt_alv_table_column.
 
@@ -315,12 +168,6 @@ types tt_dd36m type STANDARD TABLE OF dd36m with DEFAULT KEY.
       IMPORTING is_alv_table_column TYPE ts_alv_table_column
                 iv_up_to_rows       TYPE i DEFAULT 10
       RETURNING VALUE(result)       TYPE tt_alv_table_column.
-
-    CLASS-METHODS get_table_field_metadata
-      IMPORTING it_tabname_fieldname TYPE tt_tabname_fieldname
-      RETURNING VALUE(rs_result)     TYPE ts_ddic_fields.
-
-    METHODS get_table_metadata.
 
     METHODS on_before_user_command
       FOR EVENT before_user_command
@@ -366,73 +213,97 @@ types tt_dd36m type STANDARD TABLE OF dd36m with DEFAULT KEY.
     METHODS save_table.
 
     METHODS suggest_data_elements
-      IMPORTING is_alv_table_column type ts_alv_table_column
+      IMPORTING is_alv_table_column TYPE ts_alv_table_column
                 iv_up_to_rows       TYPE i DEFAULT 10.
+
+    METHODS tr_tadir_interface
+      IMPORTING pgmid    TYPE pgmid
+                !object  TYPE trobjtype
+                obj_name TYPE sobj_name
+                korrnum  TYPE trkorr_old
+                devclass TYPE devclass.
+
+    CLASS-METHODS ddif_tabl_get
+      IMPORTING iv_objname       TYPE ddobjname
+      RETURNING VALUE(rs_result) TYPE lcl_app=>ts_result_ddif_tabl_get.
 
 ENDCLASS.
 
 
 CLASS lcl_app IMPLEMENTATION.
   METHOD activate_all.
+    gr_tabname = VALUE #( ( sign   = 'I'
+                            option = 'EQ'
+                            low    = dd02l-tabname ) ).
+    gr_domname = VALUE #( ).
+    gr_rollname = VALUE #( ).
+
+    LOOP AT gt_alv_table_column REFERENCE INTO DATA(ls_alv_table_column).
+      IF ls_alv_table_column->domname CP 'Z*'.
+        INSERT VALUE #( sign   = 'I'
+                        option = 'EQ'
+                        low    = ls_alv_table_column->domname )
+               INTO TABLE gr_domname.
+      ENDIF.
+      IF ls_alv_table_column->rollname CP 'Z*'.
+        INSERT VALUE #( sign   = 'I'
+                        option = 'EQ'
+                        low    = ls_alv_table_column->rollname )
+                        INTO TABLE gr_rollname.
+      ENDIF.
+    ENDLOOP.
+    IF    gr_tabname  IS NOT INITIAL
+       OR gr_domname  IS NOT INITIAL
+       OR gr_rollname IS NOT INITIAL.
+      SUBMIT radmasg0
+             WITH trkorr = e071-trkorr
+             WITH domname  IN gr_domname
+             WITH rollname IN gr_rollname
+             WITH tabname  IN gr_tabname
+             VIA SELECTION-SCREEN
+             AND RETURN.
+    ENDIF.
   ENDMETHOD.
 
   METHOD build_alv_table_from_ddic.
-    LOOP AT is_ddic_fields-t_dd03l REFERENCE INTO DATA(ls_dd03l).
-      DATA(ls_dd03t) = VALUE #( is_ddic_fields-t_dd03t[ fieldname = ls_dd03l->fieldname ] OPTIONAL ).
-      IF ls_dd03l->rollname IS NOT INITIAL.
-        DATA(ls_dd04l) = VALUE #( is_ddic_fields-t_dd04l[ rollname = ls_dd03l->rollname ] OPTIONAL ).
-        IF ls_dd04l IS NOT INITIAL.
-          DATA(ls_dd04t) = VALUE #( is_ddic_fields-t_dd04t[ rollname = ls_dd03l->rollname ] OPTIONAL ).
-          DATA(ls_dd01l) = VALUE #( is_ddic_fields-t_dd01l[ domname = ls_dd04l-domname ] OPTIONAL ).
-        ELSE.
-          ls_dd04t = VALUE #( ).
-          ls_dd01l = VALUE #( ).
-        ENDIF.
-      ELSE.
-        ls_dd04l = VALUE #( ).
-      ENDIF.
+    LOOP AT it_ddic_fields REFERENCE INTO DATA(ls_dd03l).
       DATA(ls_alv_table_column) = VALUE ts_alv_table_column( ).
-      ls_alv_table_column-suggestion_id = COND #( WHEN iv_suggestion = abap_true THEN gv_next_suggestion_id ).
-      ls_alv_table_column-keyflag       = ls_dd03l->keyflag.
-      ls_alv_table_column-fieldname     = ls_dd03l->fieldname.
-      ls_alv_table_column-curr_uom_reftable      = ls_dd03l->reftable.
-      ls_alv_table_column-curr_uom_reffield      = ls_dd03l->reffield.
-      ls_alv_table_column-checktable    = ls_dd03l->checktable.
-      ls_alv_table_column-notnull       = ls_dd03l->notnull.
-      ls_alv_table_column-ddtext        = ls_dd03t-ddtext.
-      ls_alv_table_column-rollname      = ls_dd04l-rollname.
-      ls_alv_table_column-shlpfield     = ls_dd04l-shlpfield.
-      ls_alv_table_column-shlpname      = ls_dd04l-shlpname.
-      ls_alv_table_column-ddtext        = ls_dd04t-ddtext.
-      ls_alv_table_column-reptext       = ls_dd04t-reptext.
-      ls_alv_table_column-scrtext_s     = ls_dd04t-scrtext_s.
-      ls_alv_table_column-scrtext_m     = ls_dd04t-scrtext_m.
-      ls_alv_table_column-scrtext_l     = ls_dd04t-scrtext_l.
-      ls_alv_table_column-headlen       = ls_dd04l-headlen.
-      ls_alv_table_column-scrlen1       = ls_dd04l-scrlen1.
-      ls_alv_table_column-scrlen2       = ls_dd04l-scrlen2.
-      ls_alv_table_column-scrlen3       = ls_dd04l-scrlen3.
-      IF ls_dd01l IS NOT INITIAL.
-        ls_alv_table_column-domname     = ls_dd01l-domname.
-        ls_alv_table_column-datatype    = ls_dd01l-datatype.
-        ls_alv_table_column-leng        = ls_dd01l-leng.
-        ls_alv_table_column-decimals    = ls_dd01l-decimals.
-        ls_alv_table_column-lowercase   = ls_dd01l-lowercase.
-        ls_alv_table_column-convexit    = ls_dd01l-convexit.
-        ls_alv_table_column-outputlen   = ls_dd01l-outputlen.
-        ls_alv_table_column-signflag    = ls_dd01l-signflag.
-        ls_alv_table_column-outputstyle = ls_dd01l-outputstyle.
-        ls_alv_table_column-valexi      = ls_dd01l-valexi.
-        ls_alv_table_column-entitytab   = ls_dd01l-entitytab.
-      ELSEIF ls_dd04l IS NOT INITIAL.
-        ls_alv_table_column-datatype = ls_dd04l-datatype.
-        ls_alv_table_column-leng     = ls_dd04l-leng.
-        ls_alv_table_column-decimals = ls_dd04l-decimals.
-      ELSE.
-        ls_alv_table_column-datatype = ls_dd03l->datatype.
-        ls_alv_table_column-leng     = ls_dd03l->leng.
-        ls_alv_table_column-decimals = ls_dd03l->decimals.
-      ENDIF.
+      ls_alv_table_column-keyflag           = ls_dd03l->keyflag.
+      ls_alv_table_column-fieldname         = ls_dd03l->fieldname.
+      ls_alv_table_column-curr_uom_reftable = ls_dd03l->reftable.
+      ls_alv_table_column-curr_uom_reffield = ls_dd03l->reffield.
+      ls_alv_table_column-checktable        = ls_dd03l->checktable.
+      ls_alv_table_column-notnull           = ls_dd03l->notnull.
+      ls_alv_table_column-ddtext            = ls_dd03l->ddtext.
+      ls_alv_table_column-rollname          = ls_dd03l->rollname.
+      ls_alv_table_column-shlpfield         = ls_dd03l->shlpfield.
+      ls_alv_table_column-shlpname          = ls_dd03l->shlpname.
+      ls_alv_table_column-ddtext            = ls_dd03l->ddtext.
+      ls_alv_table_column-reptext           = ls_dd03l->reptext.
+      ls_alv_table_column-scrtext_s         = ls_dd03l->scrtext_s.
+      ls_alv_table_column-scrtext_m         = ls_dd03l->scrtext_m.
+      ls_alv_table_column-scrtext_l         = ls_dd03l->scrtext_l.
+      ls_alv_table_column-headlen           = ls_dd03l->headlen.
+      ls_alv_table_column-scrlen1           = ls_dd03l->scrlen1.
+      ls_alv_table_column-scrlen2           = ls_dd03l->scrlen2.
+      ls_alv_table_column-scrlen3           = ls_dd03l->scrlen3.
+      ls_alv_table_column-domname           = ls_dd03l->domname.
+      ls_alv_table_column-datatype          = ls_dd03l->datatype.
+      ls_alv_table_column-leng              = ls_dd03l->leng.
+      ls_alv_table_column-decimals          = ls_dd03l->decimals.
+      ls_alv_table_column-lowercase         = ls_dd03l->lowercase.
+      ls_alv_table_column-convexit          = ls_dd03l->convexit.
+      ls_alv_table_column-outputlen         = ls_dd03l->outputlen.
+      ls_alv_table_column-signflag          = ls_dd03l->signflag.
+      ls_alv_table_column-outputstyle       = ls_dd03l->outputstyle.
+      ls_alv_table_column-valexi            = ls_dd03l->valexi.
+      ls_alv_table_column-entitytab         = ls_dd03l->entitytab.
+      ls_alv_table_column-datatype          = ls_dd03l->datatype.
+      ls_alv_table_column-leng              = ls_dd03l->leng.
+      ls_alv_table_column-decimals          = ls_dd03l->decimals.
+      ls_alv_table_column-datatype          = ls_dd03l->datatype.
+      ls_alv_table_column-leng              = ls_dd03l->leng.
+      ls_alv_table_column-decimals          = ls_dd03l->decimals.
 
       IF iv_suggestion = abap_true.
         " Make all fields not editable.
@@ -443,22 +314,18 @@ CLASS lcl_app IMPLEMENTATION.
       INSERT ls_alv_table_column INTO TABLE rt_result.
     ENDLOOP.
 
-    LOOP AT rt_result REFERENCE INTO DATA(ls_alv_line).
-      ls_alv_line->selected = COND #( WHEN sy-tabix = 1 THEN icon_checked ELSE icon_space ).
-    ENDLOOP.
-
     IF iv_suggestion = abap_true.
       gv_next_suggestion_id = gv_next_suggestion_id + 1.
     ENDIF.
   ENDMETHOD.
 
   METHOD class_constructor.
-    DATA(ls_client_ddic_field) = get_table_field_metadata( VALUE #( ( tabname   = 'BNKA'
-                                                                      fieldname = 'MANDT' ) ) ).
-    DATA(lt_alv_client_default) = build_alv_table_from_ddic( is_ddic_fields = ls_client_ddic_field
+    DATA(ls_bnka_metadata) = ddif_tabl_get( 'BNKA' ).
+    DATA(lt_bnka_mandt_metadata) = VALUE ts_result_ddif_tabl_get-t_dd03p(
+                                             ( ls_bnka_metadata-t_dd03p[ fieldname = 'MANDT' ] ) ).
+    DATA(lt_alv_client_default) = build_alv_table_from_ddic( it_ddic_fields = lt_bnka_mandt_metadata
                                                              iv_suggestion  = abap_true ).
     gs_alv_client_suggestion = VALUE #( lt_alv_client_default[ 1 ] OPTIONAL ).
-    gs_alv_client_suggestion-suggestion_id = gv_next_suggestion_id.
     gv_next_suggestion_id = gv_next_suggestion_id + 1.
     " Make all fields not editable.
     gs_alv_client_suggestion-styles = VALUE #( ( style = cl_gui_alv_grid=>mc_style_disabled )
@@ -499,95 +366,13 @@ CLASS lcl_app IMPLEMENTATION.
     ENDLOOP.
   ENDMETHOD.
 
-  METHOD get_table_metadata.
-
-" read inactive if exists, otherwise read active
-data(dd02v_wa) = value dd02v( ).
-data(dd09l_wa) = value dd09v( ).
-data(dd03p_tab) = value tt_dd03p( ).
-
-dd05m_tab = value tt_dd05m( ).
-dd08v_tab = value tt_dd08v( ).
-dd35v_tab = value tt_dd35v( ).
-dd36m_tab = value tt_dd36m( ).
-
-call function 'DDIF_TABL_GET'
-  EXPORTING
-    name          = p_dd_obj
-    state         = ' '
-    langu         = sy-langu
-  IMPORTING
-    dd02v_wa      = dd02v_wa
-    dd09l_wa      = dd09l_wa
-  TABLES
-    dd03p_tab     = dd03p_tab
-    dd05m_tab     = dd05m_tab
-    dd08v_tab     = dd08v_tab
-    dd35v_tab     = dd35v_tab
-    dd36m_tab     = dd36m_tab
-  EXCEPTIONS
-    illegal_input = 1                " Value not Allowed for Parameter
-    others        = 2
-  .
-IF sy-subrc <> 0.
-
-*    SELECT SINGLE tabname, tabclass, buffered, mainflag, contflag, exclass
-*      FROM dd02l
-*      WHERE tabname  = @p_dd_obj
-*        AND as4local = dd02v_wa-as
-*        AND as4vers  = 0
-*      INTO @gs_dd02l.
-*    IF sy-subrc <> 0.
-      creation = abap_true.
-      gs_dd02l = VALUE #( tabclass = 'TRANSP'
-                          contflag = 'C'
-                          " Extension class
-                          " 0   Not classified
-                          " 1   Cannot Be Enhanced
-                          " 2   Can be enhanced (character-like)
-                          " 3   Can be enhanced (character-like or numeric)
-                          " 4   Can Be Enhanced (Deep)
-                          exclass  = '0' ).
-      gs_dd09l = VALUE #( tabart = 'APPL2' ).
-      RETURN.
-    ENDIF.
-
-    creation = abap_false.
-
-*    SELECT SINGLE ddtext FROM dd02t
-*      WHERE tabname    = @p_dd_obj
-*        AND ddlanguage = @sy-langu
-*        AND as4local   = 'A'
-*        AND as4vers    = 0
-*      INTO @gv_dd02t_ddtext.
-      gv_dd02t_ddtext = dd02v_wa-ddtext.
-
-*    SELECT SINGLE tabname, tabart FROM dd09l
-*      WHERE tabname  = @p_dd_obj
-*        AND as4local = 'A'
-*        AND as4vers  = 0
-*      INTO @gs_dd09l.
-      gs_dd09l-tabname = dd09l_wa-tabname.
-      gs_dd09l-tabart = dd09l_wa-tabart.
-
-    DATA(lt_fieldname) = VALUE tt_tabname_fieldname( ).
-    SELECT tabname, fieldname FROM dd03l
-      WHERE tabname  = @p_dd_obj
-        AND as4local = 'A'
-        AND as4vers  = 0
-        AND depth    = 0
-      INTO TABLE @lt_fieldname.
-
-    gs_ddic_fields = get_table_field_metadata( lt_fieldname ).
-  ENDMETHOD.
-
   METHOD to_range.
-    data(string_input) = |{ input }|.
-    if string_input CA '*+'.
+    DATA(string_input) = |{ input }|.
+    IF string_input CA '*+'.
       result = VALUE #( ( sign = 'I' option = 'CP' low = input ) ).
-    elseif string_input = '='.
+    ELSEIF string_input = '='.
       result = VALUE #( ( sign = 'I' option = 'EQ' low = '' ) ).
-    elseif matches( val = string_input
+    ELSEIF matches( val   = string_input
                     regex = '\d+-\d+' ).
       result = VALUE tr_string( ( sign   = 'I'
                                   option = 'BT'
@@ -597,7 +382,7 @@ IF sy-subrc <> 0.
                                   high   = segment( val   = string_input
                                                     sep   = '-'
                                                     index = 2 ) ) ).
-    elseif input IS NOT INITIAL.
+    ELSEIF input IS NOT INITIAL.
       result = VALUE tr_string( ( sign = 'I' option = 'EQ' low = string_input ) ).
     ENDIF.
   ENDMETHOD.
@@ -605,7 +390,7 @@ IF sy-subrc <> 0.
   METHOD get_table_field_metadata_2.
     TYPES tr_tabname TYPE RANGE OF tabname.
 
-    DATA(lr_KEYFLAG) = to_range( is_alv_table_column-KEYFLAG ).
+    DATA(lr_keyflag) = to_range( is_alv_table_column-keyflag ).
     DATA(lr_fieldname) = to_range( is_alv_table_column-fieldname ).
     DATA(lr_define_like_table) = to_range( is_alv_table_column-define_like_table ).
     DATA(lr_define_like_field) = to_range( is_alv_table_column-define_like_field ).
@@ -618,13 +403,6 @@ IF sy-subrc <> 0.
     DATA(lr_scrtext_s) = to_range( is_alv_table_column-scrtext_s ).
     DATA(lr_scrtext_m) = to_range( is_alv_table_column-scrtext_m ).
     DATA(lr_scrtext_l) = to_range( is_alv_table_column-scrtext_l ).
-
-*        define_like_table TYPE lvc_s_fcat-ref_table,
-*        "! Reference to a table column name instead of data element or domain name.
-*        define_like_field TYPE lvc_s_fcat-ref_field,
-*        curr_uom_reffield TYPE dd03l-reffield,
-*        "! Field name containing the Currency code or Unit of measure
-*        curr_uom_reftable TYPE dd03l-reftable,
 
     SELECT DISTINCT dd03l~tabname                          AS define_like_table,
                     dd03l~fieldname,
@@ -698,68 +476,7 @@ IF sy-subrc <> 0.
         AND dd03l~depth       = 0
       INTO TABLE @DATA(xxxxx)
       UP TO @iv_up_to_rows ROWS.
-    result = corresponding #( xxxxx ).
-  ENDMETHOD.
-
-  METHOD get_table_field_metadata.
-    CHECK it_tabname_fieldname IS NOT INITIAL.
-
-    SELECT tabname, position, fieldname, keyflag, rollname, reftable, reffield, checktable, notnull, datatype, leng,
-           decimals
-      FROM dd03l
-      FOR ALL ENTRIES IN @it_tabname_fieldname
-      WHERE tabname   = @it_tabname_fieldname-tabname
-        AND fieldname = @it_tabname_fieldname-fieldname
-        AND as4local  = 'A'
-        AND as4vers   = 0
-        AND depth     = 0
-      INTO TABLE @rs_result-t_dd03l.
-
-    SELECT fieldname, ddtext FROM dd03t
-      FOR ALL ENTRIES IN @it_tabname_fieldname
-      WHERE tabname    = @it_tabname_fieldname-tabname
-        AND ddlanguage = @sy-langu
-        AND as4local   = 'A'
-        AND fieldname  = @it_tabname_fieldname-fieldname
-      INTO TABLE @rs_result-t_dd03t.
-
-    DATA(lt_rollname) = VALUE tt_rollname( ).
-    LOOP AT rs_result-t_dd03l REFERENCE INTO DATA(ls_dd03l).
-      INSERT ls_dd03l->rollname INTO TABLE lt_rollname.
-    ENDLOOP.
-
-    IF lt_rollname IS NOT INITIAL.
-      SELECT rollname, domname, shlpname, shlpfield, headlen, scrlen1, scrlen2, scrlen3, datatype, leng, decimals
-        FROM dd04l
-        FOR ALL ENTRIES IN @lt_rollname
-        WHERE rollname = @lt_rollname-table_line
-          AND as4local = 'A'
-          AND as4vers  = 0
-        INTO TABLE @rs_result-t_dd04l.
-    ENDIF.
-
-    IF rs_result-t_dd04l IS NOT INITIAL.
-      SELECT rollname, ddtext, reptext, scrtext_s, scrtext_m, scrtext_l
-        FROM dd04t
-        FOR ALL ENTRIES IN @rs_result-t_dd04l
-        WHERE rollname   = @rs_result-t_dd04l-rollname
-          AND ddlanguage = @sy-langu
-          AND as4local   = 'A'
-          AND as4vers    = 0
-        INTO TABLE @rs_result-t_dd04t.
-    ENDIF.
-
-    IF rs_result-t_dd04l IS NOT INITIAL.
-      DATA(lt_domname) = VALUE tt_domname( FOR <gs_dd04l> IN rs_result-t_dd04l
-                                           ( <gs_dd04l>-domname ) ).
-      SELECT domname, datatype, leng, decimals, lowercase, convexit, entitytab, outputlen, valexi, signflag, outputstyle
-        FROM dd01l
-        FOR ALL ENTRIES IN @lt_domname
-        WHERE domname  = @lt_domname-table_line
-          AND as4local = 'A'
-          AND as4vers  = 0
-        INTO TABLE @rs_result-t_dd01l.
-    ENDIF.
+    result = CORRESPONDING #( xxxxx ).
   ENDMETHOD.
 
   METHOD on_before_user_command.
@@ -769,19 +486,6 @@ IF sy-subrc <> 0.
     " |on_button_click row { es_row_no-row_id }, column { es_col_id-fieldname }| TYPE 'I'.
     CASE es_col_id-fieldname.
       WHEN 'SELECTED'.
-        DATA(ls_alv_table_column) = REF #( gt_alv_table_column[ es_row_no-row_id ] OPTIONAL ).
-        IF     ls_alv_table_column           IS BOUND
-           AND ls_alv_table_column->selected  = icon_space.
-          LOOP AT gt_alv_table_column REFERENCE INTO DATA(ls_alv_table_column_2)
-               WHERE suggestion_id = ls_alv_table_column->suggestion_id.
-            ls_alv_table_column_2->selected = icon_space.
-          ENDLOOP.
-          ls_alv_table_column->selected = icon_checked.
-          go_alv->refresh_table_display( EXPORTING  is_stable = VALUE #( row = abap_true
-                                                                         col = abap_true )
-                                         EXCEPTIONS finished  = 1
-                                                    OTHERS    = 2  ).
-        ENDIF.
     ENDCASE.
   ENDMETHOD.
 
@@ -803,15 +507,14 @@ IF sy-subrc <> 0.
                                                       EXCEPTIONS finished       = 1
                                                                  OTHERS         = 2  ).
     IF sy-subrc <> 0.
-*     MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
-*       WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+      " TODO
     ENDIF.
   ENDMETHOD.
 
   METHOD on_double_click_suggestions.
-    data(ls_alv_table_column) = ref #( gt_alv_table_column[ gv_current_selection ] ).
-    data(lt_style) = ls_alv_table_column->styles.
-    ls_alv_table_column->* = gt_alv_column_suggestion[ es_row_no-row_id ].
+    DATA(ls_alv_table_column) = REF #( gt_alv_table_column[ gv_current_selection ] ).
+    DATA(lt_style) = ls_alv_table_column->styles.
+    ls_alv_table_column->*      = gt_alv_column_suggestion[ es_row_no-row_id ].
     ls_alv_table_column->styles = lt_style.
     go_alv->refresh_table_display( EXPORTING  is_stable = VALUE #( row = abap_true
                                                                    col = abap_true )
@@ -826,27 +529,22 @@ IF sy-subrc <> 0.
                     text      = 'Display all suggestions' )
            INTO e_object->mt_toolbar
            INDEX 1.
-*    ASSIGN e_object->mt_toolbar[ function = '&LOCAL&DELETE_ROW' ] TO FIELD-SYMBOL(<fs>).
-*    IF sy-subrc = 0.
-*      <fs>-function = 'ZZ_DELETE_ROW'.
-*    ENDIF.
   ENDMETHOD.
 
   METHOD on_user_command.
-    case e_ucomm.
-    when 'ZZ_DISPLAY_ALL_SUGG'.
-    suggest_data_elements( is_alv_table_column = gt_alv_table_column[ gv_current_selection ]
-                           iv_up_to_rows       = 0 ).
+    CASE e_ucomm.
+      WHEN 'ZZ_DISPLAY_ALL_SUGG'.
+        suggest_data_elements( is_alv_table_column = gt_alv_table_column[ gv_current_selection ]
+                               iv_up_to_rows       = 0 ).
 
-    go_alv_column_suggestions->refresh_table_display( EXPORTING  is_stable      = VALUE #( row = abap_true
-                                                                                           col = abap_true )
-                                                                 i_soft_refresh = abap_true
-                                                      EXCEPTIONS finished       = 1
-                                                                 OTHERS         = 2  ).
-    IF sy-subrc <> 0.
-*     MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
-*       WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
-    ENDIF.
+        go_alv_column_suggestions->refresh_table_display( EXPORTING  is_stable      = VALUE #( row = abap_true
+                                                                                               col = abap_true )
+                                                                     i_soft_refresh = abap_true
+                                                          EXCEPTIONS finished       = 1
+                                                                     OTHERS         = 2  ).
+        IF sy-subrc <> 0.
+          " TODO
+        ENDIF.
     ENDCASE.
   ENDMETHOD.
 
@@ -877,27 +575,13 @@ IF sy-subrc <> 0.
             dd09l-tabart = 'APPL2'.
         ENDCASE.
 
-      WHEN c_show_hide_ddic_attr-EDIT.
-
-*        is_table         = abap_false.
-*        is_structure     = abap_false.
-*        is_transactional = abap_false.
-*        is_customizing   = abap_false.
-*        is_master_data   = abap_false.
+      WHEN c_show_hide_ddic_attr-edit.
 
     ENDCASE.
 
     CASE lv_okcode.
       WHEN 'ACTIVATE'.
-*        if e071-trkorr is not initial.
-        SUBMIT radmasg0
-               WITH trkorr    = e071-trkorr
-               WITH domname  IN gr_domname
-               WITH rollname IN gr_rollname
-               WITH tabname  IN gr_tabname
-               VIA SELECTION-SCREEN
-               AND RETURN.
-*        endif.
+        activate_all( ).
 
       WHEN 'QUIT'.
         go_alv->check_changed_data( ). " <=== transfer screen data to internal table
@@ -906,28 +590,10 @@ IF sy-subrc <> 0.
 
       WHEN 'SAVE'.
         go_alv->check_changed_data( ). " <=== transfer screen data to internal table
-        DATA(gt_alv_final) = VALUE tt_alv_table_column( ).
-        LOOP AT gt_alv_table_column REFERENCE INTO DATA(ls_alv_table_column_suggested)
-             WHERE     suggestion_id <> 0
-                   AND selected       = icon_checked.
-          DATA(ls_alv_table_column) = REF #( gt_alv_table_column[
-                                                 fieldname     = ls_alv_table_column_suggested->fieldname
-                                                 suggestion_id = abap_false ]
-                                             OPTIONAL ).
-          IF ls_alv_table_column IS BOUND.
-            DATA(ls_alv_final) = ls_alv_table_column->*.
-            IF     ls_alv_final-rollname                   IS INITIAL
-               AND ls_alv_table_column_suggested->rollname IS NOT INITIAL.
-              ls_alv_final-rollname = ls_alv_table_column_suggested->rollname.
-            ENDIF.
-            INSERT ls_alv_final INTO TABLE gt_alv_final.
-          ENDIF.
-        ENDLOOP.
-
         save_domains( ).
         save_data_elements( ).
         save_table( ).
-        activate_all( ).
+        commit work.
 
       WHEN 'SHOW_HIDE_DDIC_ATTR'.
         " Toggle boolean
@@ -939,23 +605,18 @@ IF sy-subrc <> 0.
         DATA(lt_filter) = COND lvc_t_filt( WHEN gv_suggestions_shown = abap_false
                                            THEN VALUE #(
                                                ( fieldname = 'SUGGESTION_ID' sign = 'I' option = 'EQ' low = '0' ) ) ).
-        go_alv->set_filter_criteria(
-          EXPORTING
-            it_filter                 = lt_filter
-          EXCEPTIONS
-            no_fieldcatalog_available = 1
-            others                    = 2 ).
+        go_alv->set_filter_criteria( EXPORTING  it_filter                 = lt_filter
+                                     EXCEPTIONS no_fieldcatalog_available = 1
+                                                OTHERS                    = 2 ).
         IF sy-subrc <> 0.
-*         MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
-*           WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+          " TODO
         ENDIF.
         go_alv->refresh_table_display( EXPORTING  is_stable = VALUE #( row = abap_true
                                                                        col = abap_true )
                                        EXCEPTIONS finished  = 1
                                                   OTHERS    = 2  ).
         IF sy-subrc <> 0.
-*     MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
-*       WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+          " TODO
         ENDIF.
 
       WHEN 'SUGGEST'.
@@ -973,8 +634,7 @@ IF sy-subrc <> 0.
                                                           EXCEPTIONS finished       = 1
                                                                      OTHERS         = 2  ).
         IF sy-subrc <> 0.
-*     MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
-*       WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+          " TODO
         ENDIF.
     ENDCASE.
   ENDMETHOD.
@@ -1000,9 +660,6 @@ IF sy-subrc <> 0.
 
         is_table = abap_false.
         is_structure = abap_false.
-*            IF creation = abap_true.
-*              is_table = abap_true.
-*            ELSE
         IF dd02l-tabclass = 'TRANSP'.
           is_table = abap_true.
         ELSEIF dd02l-tabclass = 'INTTAB'.
@@ -1012,9 +669,6 @@ IF sy-subrc <> 0.
         is_customizing   = abap_false.
         is_transactional = abap_false.
         is_master_data   = abap_false.
-*            IF creation = abap_true.
-*              is_customizing = abap_true.
-*            ELSE
         IF     dd02l-contflag = 'A'
            AND dd09l-tabart   = 'APPL1'.
           is_transactional = abap_true.
@@ -1039,10 +693,6 @@ IF sy-subrc <> 0.
     LOOP AT SCREEN INTO DATA(screen_field).
       DATA(new_screen_field) = screen_field.
       CASE screen_field-name.
-*        WHEN 'DD02L-TABNAME'.
-*          IF creation = abap_false.
-*            new_screen_field-input = '0'.
-*          ENDIF.
         WHEN 'IS_TABLE'
           OR 'IS_STRUCTURE'.
           IF    show_hide_ddic_attr = c_show_hide_ddic_attr-edit
@@ -1061,7 +711,7 @@ IF sy-subrc <> 0.
                   AND is_master_data   = abap_false ).
             new_screen_field-active = '1'.
             IF show_hide_ddic_attr = c_show_hide_ddic_attr-show.
-              new_screen_field-input  = '0'.
+              new_screen_field-input = '0'.
             ENDIF.
           ELSE.
             new_screen_field-active = '0'.
@@ -1087,7 +737,7 @@ IF sy-subrc <> 0.
                         AND is_master_data   = abap_false ) ).
             new_screen_field-active = '1'.
             IF show_hide_ddic_attr = c_show_hide_ddic_attr-show.
-              new_screen_field-input  = '0'.
+              new_screen_field-input = '0'.
             ENDIF.
           ELSE.
             new_screen_field-active = '0'.
@@ -1100,7 +750,7 @@ IF sy-subrc <> 0.
           ELSE.
             new_screen_field-active = '1'.
             IF show_hide_ddic_attr = c_show_hide_ddic_attr-show.
-              new_screen_field-input  = '0'.
+              new_screen_field-input = '0'.
             ENDIF.
           ENDIF.
       ENDCASE.
@@ -1111,31 +761,6 @@ IF sy-subrc <> 0.
   ENDMETHOD.
 
   METHOD pbo_first_time.
-    get_table_metadata( ).
-
-    dd02l-tabname = p_dd_obj.
-    dd02t-ddtext = gv_dd02t_ddtext.
-    dd02l-tabclass = gs_dd02l-tabclass.
-    dd02l-buffered = gs_dd02l-buffered.
-    dd02l-mainflag = gs_dd02l-mainflag.
-    dd02l-contflag = gs_dd02l-contflag.
-    dd09l-tabart = gs_dd09l-tabart.
-
-    gt_alv_table_column = COND #( WHEN creation = abap_true AND dd02l-tabclass <> 'INTTAB'
-                                  THEN VALUE #( ( keyflag = abap_true fieldname = 'MANDT' ) )
-                                  ELSE build_alv_table_from_ddic( gs_ddic_fields ) ).
-
-    DATA(lo_custom) = NEW cl_gui_custom_container( container_name = 'TABLE_COLUMNS' ).
-    go_alv = NEW cl_gui_alv_grid( i_parent = lo_custom ).
-
-    go_alv->process_ucomm_on_invalid_input( it_ucomms = VALUE #( ( conv #( 3 ) ) ) ). " 3 = CL_GUI_ALV_GRID_BASE=>EVT_DBLCLICK_ROW_COL
-
-*    SET HANDLER on_before_user_command FOR go_alv.
-*    SET HANDLER on_button_click        FOR go_alv.
-*    SET HANDLER on_data_changed        FOR go_alv.
-    SET HANDLER on_double_click        FOR go_alv.
-
-    DATA(lt_fieldcatalog) = get_lvc_fcat( gt_alv_table_column ).
     TYPES:
       BEGIN OF ts_f4_field,
         fieldname TYPE lvc_s_fcat-fieldname,
@@ -1143,6 +768,64 @@ IF sy-subrc <> 0.
         ref_field TYPE lvc_s_fcat-ref_field,
       END OF ts_f4_field.
     TYPES tt_f4_field TYPE SORTED TABLE OF ts_f4_field WITH UNIQUE KEY fieldname.
+
+    dd02l-tabname = p_dd_obj.
+
+    DATA(ls_result_ddif_tabl_get) = ddif_tabl_get( p_dd_obj ).
+
+    IF ls_result_ddif_tabl_get IS INITIAL.
+
+      creation = abap_true.
+
+      dd02t-ddtext = ls_result_ddif_tabl_get-s_dd02v-ddtext.
+      dd02l-tabclass = 'TRANSP'.
+      dd02l-mainflag = 'N'. " Maintenance not allowed
+      dd02l-contflag = 'C'. " Customizing
+      " Extension class
+      " 0   Not classified
+      " 1   Cannot Be Enhanced
+      " 2   Can be enhanced (character-like)
+      " 3   Can be enhanced (character-like or numeric)
+      " 4   Can Be Enhanced (Deep)
+      dd02l-exclass  = '0'. " Customizing
+      dd09l-tabart = 'APPL2'.
+      dd09l-tabkat = '0'.
+
+      show_hide_ddic_attr = c_show_hide_ddic_attr-hide_if_possible.
+
+    ELSE.
+
+      creation = abap_false.
+
+      dd02t-ddtext = ls_result_ddif_tabl_get-s_dd02v-ddtext.
+      dd02l-tabclass = ls_result_ddif_tabl_get-s_dd02v-tabclass.
+      dd02l-buffered = ls_result_ddif_tabl_get-s_dd02v-buffered.
+      dd02l-mainflag = ls_result_ddif_tabl_get-s_dd02v-mainflag.
+      dd02l-contflag = ls_result_ddif_tabl_get-s_dd02v-contflag.
+      dd02l-exclass  = ls_result_ddif_tabl_get-s_dd02v-exclass.
+      dd09l-tabart = ls_result_ddif_tabl_get-s_dd09l-tabart.
+      dd09l-tabkat = ls_result_ddif_tabl_get-s_dd09l-tabkat.
+
+    ENDIF.
+
+    SELECT SINGLE devclass, korrnum FROM tadir
+      WHERE pgmid    = 'R3TR'
+        AND object   = 'TABL'
+        AND obj_name = @p_dd_obj
+      INTO (@tadir-devclass,@e071-trkorr).
+
+    gt_alv_table_column = COND #( WHEN creation = abap_true AND dd02l-tabclass <> 'INTTAB'
+                                  THEN VALUE #( ( keyflag = abap_true fieldname = 'MANDT' ) )
+                                  ELSE build_alv_table_from_ddic( ls_result_ddif_tabl_get-t_dd03p ) ).
+
+    DATA(lo_custom) = NEW cl_gui_custom_container( container_name = 'TABLE_COLUMNS' ).
+    go_alv = NEW cl_gui_alv_grid( i_parent = lo_custom ).
+
+    go_alv->process_ucomm_on_invalid_input( it_ucomms = VALUE #( ( CONV #( 3 ) ) ) ). " 3 = CL_GUI_ALV_GRID_BASE=>EVT_DBLCLICK_ROW_COL
+
+    SET HANDLER on_double_click FOR go_alv.
+
+    DATA(lt_fieldcatalog) = get_lvc_fcat( gt_alv_table_column ).
     DATA(lt_f4_field) = VALUE tt_f4_field( ( fieldname = 'KEYFLAG  ' ref_table = 'DD03L' ref_field = 'KEYFLAG  ' )
                                            ( fieldname = 'DATATYPE ' ref_table = 'DD01L' ref_field = 'DATATYPE ' )
                                            ( fieldname = 'ROLLNAME ' ref_table = 'DD03L' ref_field = 'ROLLNAME ' )
@@ -1154,6 +837,7 @@ IF sy-subrc <> 0.
                                            ( fieldname = 'SHLPNAME ' ref_table = 'DD04L' ref_field = 'SHLPNAME ' )
                                            ( fieldname = 'LOWERCASE' ref_table = 'DD01L' ref_field = 'LOWERCASE' )
                                            ( fieldname = 'VALEXI   ' ref_table = 'DD01L' ref_field = 'VALEXI   ' ) ).
+
     LOOP AT lt_fieldcatalog REFERENCE INTO DATA(ls_fieldcatalog).
       CASE ls_fieldcatalog->fieldname.
         WHEN 'SUGGESTION_ID'.
@@ -1189,180 +873,142 @@ IF sy-subrc <> 0.
   ENDMETHOD.
 
   METHOD save_data_elements.
-gr_rollname = value #( ).
-
     LOOP AT gt_alv_table_column REFERENCE INTO DATA(ls_alv_table_column)
-         WHERE     suggestion_id  = abap_false
-               AND rollname   CP 'Z*'.
+         WHERE rollname CP 'Z*'.
 
-      DATA(to_name) = CONV ddobjname( ls_alv_table_column->rollname ) ##OPERATOR[DDOBJNAME].
-      " state = 'A'.
-      " langu = sy-langu.
+      DATA(lv_objname) = EXACT ddobjname( ls_alv_table_column->rollname ) ##OPERATOR[DDOBJNAME].
 
-DATA(dd04v_wa) = VALUE dd04v( ).
-DATA(tpara_wa) = VALUE tpara( ).
+      DATA(dd04v_wa) = VALUE dd04v( ).
+      DATA(tpara_wa) = VALUE tpara( ).
       CALL FUNCTION 'DDIF_DTEL_GET'
-        EXPORTING
-          name          = TO_name
-          state         = ' '
-          langu         = sy-langu
-        IMPORTING
-          dd04v_wa      = dd04v_wa
-          tpara_wa      = tpara_wa
-        EXCEPTIONS
-          illegal_input = 1                " Value not Allowed for Parameter
-          others        = 2.
+        EXPORTING  name          = lv_objname
+                   state         = ' '
+                   langu         = sy-langu
+        IMPORTING  dd04v_wa      = dd04v_wa
+                   tpara_wa      = tpara_wa
+        EXCEPTIONS illegal_input = 1                " Value not Allowed for Parameter
+                   OTHERS        = 2.
       IF sy-subrc <> 0.
-*       MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
-*         WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+        " TODO
       ENDIF.
 
+      DATA(new_dd04v_wa) = VALUE dd04v( BASE dd04v_wa
+                                        rollname   = ls_alv_table_column->rollname
+                                        ddlanguage = sy-langu
+                                        domname    = ls_alv_table_column->domname
+                                        headlen    = ls_alv_table_column->headlen
+                                        scrlen1    = ls_alv_table_column->scrlen1
+                                        scrlen2    = ls_alv_table_column->scrlen2
+                                        scrlen3    = ls_alv_table_column->scrlen3
+                                        ddtext     = ls_alv_table_column->ddtext
+                                        reptext    = ls_alv_table_column->reptext
+                                        scrtext_s  = ls_alv_table_column->scrtext_s
+                                        scrtext_m  = ls_alv_table_column->scrtext_m
+                                        scrtext_l  = ls_alv_table_column->scrtext_l
+                                        as4user    = sy-uname
+                                        as4date    = sy-datum
+                                        as4time    = sy-uzeit
+                                        dtelmaster = sy-langu
+                                        shlpname   = ls_alv_table_column->shlpname
+                                        shlpfield  = ls_alv_table_column->shlpfield
+                                        datatype   = ls_alv_table_column->datatype
+                                        leng       = ls_alv_table_column->leng
+                                        decimals   = ls_alv_table_column->decimals
+                                        outputlen  = ls_alv_table_column->outputlen
+                                        lowercase  = ls_alv_table_column->lowercase
+                                        signflag   = ls_alv_table_column->signflag
+                                        convexit   = ls_alv_table_column->convexit
+                                        valexi     = ls_alv_table_column->valexi
+                                        entitytab  = ls_alv_table_column->entitytab ).
 
-      DATA(new_dd04v_wa) = VALUE dd04v( base dd04v_wa
-      rollname   = ls_alv_table_column->fieldname
-                                    ddlanguage = sy-langu
-                                    domname    = ls_alv_table_column->domname
-*                                    routputlen = 0
-*                                    memoryid   = ''
-*                                    logflag    = ''
-                                    headlen    = ls_alv_table_column->headlen "strlen( ls_alv_table_column->reptext )
-                                    scrlen1    = ls_alv_table_column->scrlen1
-                                    scrlen2    = ls_alv_table_column->scrlen2
-                                    scrlen3    = ls_alv_table_column->scrlen3
-                                    ddtext     = ls_alv_table_column->ddtext
-                                    reptext    = ls_alv_table_column->reptext
-                                    scrtext_s  = ls_alv_table_column->scrtext_s
-                                    scrtext_m  = ls_alv_table_column->scrtext_m
-                                    scrtext_l  = ls_alv_table_column->scrtext_l
-*                                    actflag    = ''
-*                                    applclass  = '' " NON UTILISE dd01v_wa-applclass
-*                                    authclass  = ls_alv_table_column->authclass ??????????
-                                    as4user    = sy-uname
-                                    as4date    = sy-datum
-                                    as4time    = sy-uzeit
-                                    dtelmaster = sy-langu
-*                                    reservedte = ''
-*                                    dtelglobal = ''
-                                    shlpname   = ls_alv_table_column->shlpname
-                                    shlpfield  = ls_alv_table_column->shlpfield
-*                                    deffdname  = ''
-                                    datatype   = ls_alv_table_column->datatype
-                                    leng       = ls_alv_table_column->leng
-                                    decimals   = ls_alv_table_column->decimals
-                                    outputlen  = ls_alv_table_column->outputlen
-                                    lowercase  = ls_alv_table_column->lowercase
-                                    signflag   = ls_alv_table_column->signflag
-                                    convexit   = ls_alv_table_column->convexit
-                                    valexi     = ls_alv_table_column->valexi
-                                    entitytab  = ls_alv_table_column->entitytab
-*                                    refkind    = 'D'
-*                                    reftype    = ''
-*                                    proxytype  = ''
-*                                    ltrflddis  = ''
-*                                    bidictrlc  = ''
-*                                    nohistory  = ''
-                                    ).
+      IF new_dd04v_wa <> dd04v_wa.
+        CALL FUNCTION 'DDIF_DTEL_PUT'
+          EXPORTING  name              = lv_objname
+                     dd04v_wa          = new_dd04v_wa
+          EXCEPTIONS dtel_not_found    = 1                " No Sources for the Data Element
+                     name_inconsistent = 2                " Name in Sources Inconsistent with NAME
+                     dtel_inconsistent = 3                " Inconsistent Sources
+                     put_failure       = 4                " Write Error (ROLLBACK Recommended)
+                     put_refused       = 5                " Write not Allowed
+                     OTHERS            = 6.
+        IF sy-subrc <> 0.
+          " TODO
+        ENDIF.
 
-if new_dd04v_wa <> dd04v_wa.
-
-insert value #( sign = 'I' option = 'EQ' low = to_name ) into table gr_rollname.
-
-      CALL FUNCTION 'DDIF_DTEL_PUT'
-        EXPORTING  name              = to_name
-                   dd04v_wa          = dd04v_wa
-        EXCEPTIONS dtel_not_found    = 1                " No Sources for the Data Element
-                   name_inconsistent = 2                " Name in Sources Inconsistent with NAME
-                   dtel_inconsistent = 3                " Inconsistent Sources
-                   put_failure       = 4                " Write Error (ROLLBACK Recommended)
-                   put_refused       = 5                " Write not Allowed
-                   OTHERS            = 6.
-
-endif.
+        tr_tadir_interface( pgmid    = 'R3TR'
+                            object   = 'DTEL'
+                            obj_name = EXACT #( lv_objname )
+                            korrnum  = EXACT #( e071-trkorr )
+                            devclass = tadir-devclass ).
+      ENDIF.
     ENDLOOP.
   ENDMETHOD.
 
   METHOD save_domains.
-gr_domname = value #( ).
-
     LOOP AT gt_alv_table_column REFERENCE INTO DATA(ls_alv_table_column)
-         WHERE     suggestion_id  = abap_false
-               AND domname    cp 'Z*'.
+         WHERE domname CP 'Z*'.
 
-      DATA(to_name) = CONV ddobjname( ls_alv_table_column->domname ) ##OPERATOR[DDOBJNAME].
+      DATA(lv_objname) = EXACT ddobjname( ls_alv_table_column->domname ) ##OPERATOR[DDOBJNAME].
 
       DATA(dd01v_wa) = VALUE dd01v( ).
-      types tt_dd07v type STANDARD TABLE OF dd07v with DEFAULT KEY.
-      data(dd07v_tab) = value tt_dd07V( ).
+      TYPES tt_dd07v TYPE STANDARD TABLE OF dd07v WITH DEFAULT KEY.
+      DATA(dd07v_tab) = VALUE tt_dd07v( ).
       CALL FUNCTION 'DDIF_DOMA_GET'
-        EXPORTING  name          = TO_name
+        EXPORTING  name          = lv_objname
         IMPORTING  dd01v_wa      = dd01v_wa    " Header of the Domain
-        TABLES dd07v_tab = dd07v_tab
+        TABLES     dd07v_tab     = dd07v_tab
         EXCEPTIONS illegal_input = 1
                    OTHERS        = 2.
+      IF sy-subrc <> 0.
+        " TODO
+      ENDIF.
 
-      DATA(new_dd01v_wa) = VALUE dd01v(
-      base dd01v_wa
-      domname     = ls_alv_table_column->domname
-                                    ddlanguage  = sy-langu
-                                    datatype    = ls_alv_table_column->datatype
-                                    leng        = ls_alv_table_column->leng
-                                    outputlen   = ls_alv_table_column->outputlen
-                                    decimals    = ls_alv_table_column->decimals
-                                    lowercase   = ls_alv_table_column->lowercase
-                                    signflag    = ls_alv_table_column->signflag
-*                                    langflag    = ''
-*                                    valexi      = ''
-                                    entitytab   = ls_alv_table_column->entitytab
-                                    convexit    = ls_alv_table_column->convexit
-*                                    mask        = ''
-*                                    masklen     = ''
-                                    ddtext      = ls_alv_table_column->ddtext
-*                                    actflag     = ''
-*                                    applclass   = ''
-*                                    authclass   = ''
-                                    as4user     = sy-uname
-                                    as4date     = sy-datum
-                                    as4time     = sy-uzeit
-                                    dommaster   = sy-langu
-*                                    reservedom  = ''
-*                                    domglobal   = ''
-*                                    appendname  = ''
-*                                    appexist    = ''
-*                                    proxytype   = ''
-                                    outputstyle = ls_alv_table_column->outputstyle
-*                                    ampmformat  = ''
-                                    ).
+      DATA(new_dd01v_wa) = VALUE dd01v( BASE dd01v_wa
+                                        domname     = ls_alv_table_column->domname
+                                        ddlanguage  = sy-langu
+                                        datatype    = ls_alv_table_column->datatype
+                                        leng        = ls_alv_table_column->leng
+                                        outputlen   = ls_alv_table_column->outputlen
+                                        decimals    = ls_alv_table_column->decimals
+                                        lowercase   = ls_alv_table_column->lowercase
+                                        signflag    = ls_alv_table_column->signflag
+                                        entitytab   = ls_alv_table_column->entitytab
+                                        convexit    = ls_alv_table_column->convexit
+                                        ddtext      = ls_alv_table_column->ddtext
+                                        as4user     = sy-uname
+                                        as4date     = sy-datum
+                                        as4time     = sy-uzeit
+                                        dommaster   = sy-langu
+                                        outputstyle = ls_alv_table_column->outputstyle ).
 
-if new_dd01v_wa <> dd01V_wa.
+      IF new_dd01v_wa <> dd01v_wa.
 
-insert value #( sign = 'I' option = 'EQ' low = to_name ) into table gr_domname.
+        CALL FUNCTION 'DDIF_DOMA_PUT'
+          EXPORTING  name              = lv_objname
+                     dd01v_wa          = new_dd01v_wa
+          EXCEPTIONS doma_not_found    = 1
+                     name_inconsistent = 2
+                     doma_inconsistent = 3
+                     put_failure       = 4
+                     put_refused       = 5
+                     OTHERS            = 6.
+        IF sy-subrc <> 0.
+          " TODO
+        ENDIF.
 
-      CALL FUNCTION 'DDIF_DOMA_PUT'
-        EXPORTING  name              = to_name
-                   dd01v_wa          = new_dd01v_wa
-        EXCEPTIONS doma_not_found    = 1
-                   name_inconsistent = 2
-                   doma_inconsistent = 3
-                   put_failure       = 4
-                   put_refused       = 5
-                   OTHERS            = 6.
-
-endif.
+        tr_tadir_interface( pgmid    = 'R3TR'
+                            object   = 'DOMA'
+                            obj_name = EXACT #( lv_objname )
+                            korrnum  = EXACT #( e071-trkorr )
+                            devclass = tadir-devclass ).
+      ENDIF.
     ENDLOOP.
   ENDMETHOD.
 
   METHOD save_table.
-    DATA l_ddobjname TYPE ddobjname.
     DATA ls_dd02v    TYPE dd02v.
     DATA lt_dd03p    TYPE TABLE OF dd03p.
     DATA ls_dd03p    TYPE dd03p.
-
-gr_tabname = value #( (  sign = 'I' option = 'EQ' low = dd02L-tabname ) ).
-
-*    save_domains( ).
-*    save_data_elements( ).
-
-    l_ddobjname = dd02l-tabname.
 
     CLEAR ls_dd02v.
     ls_dd02v-tabname    = dd02l-tabname.
@@ -1370,37 +1016,20 @@ gr_tabname = value #( (  sign = 'I' option = 'EQ' low = dd02L-tabname ) ).
     ls_dd02v-tabclass   = dd02l-tabclass.
     ls_dd02v-ddtext     = dd02t-ddtext.
     ls_dd02v-exclass    = dd02l-exclass.
-    ls_dd02v-exclass    = dd02l-exclass.
+    ls_dd02v-contflag   = dd02l-contflag.
+    ls_dd02v-mainflag   = dd02l-mainflag.
 
-data(ls_dd09l) = value dd09v(
-    tabname     = dd02l-tabname
-    as4local    = 'A'
-    as4vers     = 0
-    tabkat      = dd09l-tabkat
-    tabart      = dd09l-tabart
-*    pufferung   =
-*    schfeldanz  =
-*    protokoll   =
-*    speichpuff  =
-*    as4user     =
-*    as4date     =
-*    as4time     =
-*    transpflag  =
-*    reserve     =
-*    uebersetz   =
-*    actflag     =
-*    bufallow    =
-*    javaonly    =
-*    roworcolst  =
-*    sharingtype =
-).
+    DATA(ls_dd09l) = VALUE dd09v( tabname  = dd02l-tabname
+                                  as4local = 'A'
+                                  as4vers  = 0
+                                  tabkat   = dd09l-tabkat
+                                  tabart   = dd09l-tabart ).
 
     DATA(l_position) = 0.
 
     REFRESH lt_dd03p.
     l_position = 0.
-    LOOP AT gt_alv_table_column REFERENCE INTO DATA(ls_alv_table_column)
-         WHERE suggestion_id = 0.
+    LOOP AT gt_alv_table_column REFERENCE INTO DATA(ls_alv_table_column).
       l_position = l_position + 1.
       CLEAR ls_dd03p.
       ls_dd03p-tabname    = dd02l-tabname.
@@ -1416,12 +1045,12 @@ data(ls_dd09l) = value dd09v(
       ls_dd03p-reftable   = ls_alv_table_column->curr_uom_reftable.
       ls_dd03p-reffield   = ls_alv_table_column->curr_uom_reffield.
       ls_dd03p-rollname   = ls_alv_table_column->rollname.
-      ls_dd03p-shlpfield   = ls_alv_table_column->shlpfield.
+      ls_dd03p-shlpfield  = ls_alv_table_column->shlpfield.
       ls_dd03p-shlpname   = ls_alv_table_column->shlpname.
       APPEND ls_dd03p TO lt_dd03p.
     ENDLOOP.
 
-    l_ddobjname = dd02l-tabname.
+    DATA(l_ddobjname) = exact ddobjname( dd02l-tabname ).
     CALL FUNCTION 'DDIF_TABL_PUT'
       EXPORTING  name              = l_ddobjname
                  dd02v_wa          = ls_dd02v
@@ -1434,108 +1063,102 @@ data(ls_dd09l) = value dd09v(
                  put_refused       = 5
                  OTHERS            = 6.
     IF sy-subrc <> 0.
-      MESSAGE 'aïe' TYPE 'I'.
+      " TODO
     ENDIF.
+
+    tr_tadir_interface( pgmid    = 'R3TR'
+                        object   = 'TABL'
+                        obj_name = EXACT #( l_ddobjname )
+                        korrnum  = EXACT #( e071-trkorr )
+                        devclass = tadir-devclass ).
   ENDMETHOD.
 
   METHOD suggest_data_elements.
-    DATA lt_tabname_fieldname TYPE tt_tabname_fieldname.
+    DATA(ls_alv_table_column) = REF #( is_alv_table_column ).
+    gt_alv_column_suggestion = VALUE #( ).
 
-    DATA(ls_alv_table_column) = ref #( is_alv_table_column ).
-    gt_alv_column_suggestion = value #( ).
+    CASE ls_alv_table_column->fieldname.
+      WHEN 'MANDT'
+        OR 'CLIENT'
+        OR 'MANDANT'.
 
-*    LOOP AT gt_alv_table_column REFERENCE INTO DATA(ls_alv_table_column)
-*        WHERE suggestion_id = 0.
-*
-*      DATA(lv_tabix_after_current_row) = sy-tabix + 1.
+        gt_alv_column_suggestion = VALUE #( ( gs_alv_client_suggestion ) ).
 
-      CASE ls_alv_table_column->fieldname.
-        WHEN 'MANDT'
-          OR 'CLIENT'
-          OR 'MANDANT'.
+      WHEN OTHERS.
+        gt_alv_column_suggestion = get_table_field_metadata_2( is_alv_table_column = is_alv_table_column
+                                                               iv_up_to_rows       = iv_up_to_rows ).
+    ENDCASE.
+  ENDMETHOD.
 
-          gt_alv_column_suggestion = value #( ( gs_alv_client_suggestion ) ).
-*          INSERT gs_alv_client_suggestion INTO gt_alv_table_column INDEX lv_tabix_after_current_row.
+  METHOD ddif_tabl_get.
+    rs_result = VALUE ts_result_ddif_tabl_get( ).
+    CALL FUNCTION 'DDIF_TABL_GET'
+      EXPORTING  name          = iv_objname
+                 state         = ' '
+                 langu         = sy-langu
+      IMPORTING  dd02v_wa      = rs_result-s_dd02v
+                 dd09l_wa      = rs_result-s_dd09l
+      TABLES     dd03p_tab     = rs_result-t_dd03p
+                 dd05m_tab     = rs_result-t_dd05m
+                 dd08v_tab     = rs_result-t_dd08v
+                 dd35v_tab     = rs_result-t_dd35v
+                 dd36m_tab     = rs_result-t_dd36m
+      EXCEPTIONS illegal_input = 1                " Value not Allowed for Parameter
+                 OTHERS        = 2.
+    IF sy-subrc <> 0.
+      " TODO
+    ENDIF.
+  ENDMETHOD.
 
-        WHEN OTHERS.
-          gt_alv_column_suggestion = get_table_field_metadata_2( is_alv_table_column = is_alv_table_column
-                                                                 iv_up_to_rows       = iv_up_to_rows ).
-*          IF     ls_alv_table_column->define_like_table IS NOT INITIAL
-*             AND ls_alv_table_column->define_like_field IS NOT INITIAL.
-*            DATA(ls_ddic_ref_field) = get_table_field_metadata(
-*                                          VALUE #( ( tabname   = ls_alv_table_column->define_like_table
-*                                                     fieldname = ls_alv_table_column->define_like_field ) ) ).
-*            DATA(lt_alv_table_column) = build_alv_table_from_ddic( is_ddic_fields = ls_ddic_ref_field
-*                                                                   iv_suggestion  = abap_true ).
-*            INSERT LINES OF lt_alv_table_column INTO TABLE gt_alv_column_suggestion." INDEX lv_tabix_after_current_row.
-*          ELSEIF ls_alv_table_column->rollname IS NOT INITIAL.
-*            lt_tabname_fieldname = VALUE tt_tabname_fieldname( ).
-*            SELECT dd03l~tabname,
-*                   dd03l~fieldname
-*              FROM dd03l
-*                     INNER JOIN
-*                       dd02l ON  dd02l~tabname  = dd03l~tabname
-*                             AND dd02l~tabclass = @dd02l-tabclass
-*              WHERE dd03l~rollname = @ls_alv_table_column->rollname
-*                AND dd03l~keyflag  = @ls_alv_table_column->keyflag
-*              INTO TABLE @lt_tabname_fieldname
-*              UP TO 10 ROWS.
-*            ls_ddic_ref_field = get_table_field_metadata( lt_tabname_fieldname ).
-*            lt_alv_table_column = build_alv_table_from_ddic( is_ddic_fields = ls_ddic_ref_field
-*                                                             iv_suggestion  = abap_true ).
-*            INSERT LINES OF lt_alv_table_column INTO TABLE gt_alv_column_suggestion." INDEX lv_tabix_after_current_row.
-*          ELSEIF ls_alv_table_column->fieldname IS NOT INITIAL.
-*            lt_tabname_fieldname = VALUE tt_tabname_fieldname( ).
-*            SELECT dd03l~tabname,
-*                   dd03l~fieldname
-*              FROM dd03l
-*                     INNER JOIN
-*                       dd02l ON  dd02l~tabname  = dd03l~tabname
-*                             AND dd02l~tabclass = @dd02l-tabclass
-*              WHERE dd03l~fieldname = @ls_alv_table_column->fieldname
-*              INTO TABLE @lt_tabname_fieldname
-*              UP TO 10 ROWS.
-*            ls_ddic_ref_field = get_table_field_metadata( lt_tabname_fieldname ).
-*            lt_alv_table_column = build_alv_table_from_ddic( is_ddic_fields = ls_ddic_ref_field
-*                                                             iv_suggestion  = abap_true ).
-*            INSERT LINES OF lt_alv_table_column INTO TABLE gt_alv_column_suggestion." INDEX lv_tabix_after_current_row.
-*          ELSEIF ls_alv_table_column->define_like_field IS NOT INITIAL.
-*            lt_tabname_fieldname = VALUE tt_tabname_fieldname( ).
-*            SELECT dd03l~tabname,
-*                   dd03l~fieldname
-*              FROM dd03l
-*                     INNER JOIN
-*                       dd02l ON  dd02l~tabname  = dd03l~tabname
-*                             AND dd02l~tabclass = @dd02l-tabclass
-*              WHERE dd03l~fieldname = @ls_alv_table_column->define_like_field
-*              INTO TABLE @lt_tabname_fieldname
-*              UP TO 10 ROWS.
-*            ls_ddic_ref_field = get_table_field_metadata( lt_tabname_fieldname ).
-*            lt_alv_table_column = build_alv_table_from_ddic( is_ddic_fields = ls_ddic_ref_field
-*                                                             iv_suggestion  = abap_true ).
-*            INSERT LINES OF lt_alv_table_column INTO TABLE gt_alv_column_suggestion." INDEX lv_tabix_after_current_row.
-*          ENDIF.
-      ENDCASE.
-*    ENDLOOP.
+  METHOD tr_tadir_interface.
+    CALL FUNCTION 'TR_TADIR_INTERFACE'
+      EXPORTING  wi_test_modus                  = abap_false
+                 wi_tadir_pgmid                 = pgmid
+                 wi_tadir_object                = object
+                 wi_tadir_obj_name              = obj_name
+                 wi_tadir_korrnum               = korrnum
+                 wi_tadir_devclass              = devclass
+      EXCEPTIONS tadir_entry_not_existing       = 1
+                 tadir_entry_ill_type           = 2
+                 no_systemname                  = 3
+                 no_systemtype                  = 4
+                 original_system_conflict       = 5
+                 object_reserved_for_devclass   = 6
+                 object_exists_global           = 7
+                 object_exists_local            = 8
+                 object_is_distributed          = 9
+                 obj_specification_not_unique   = 10
+                 no_authorization_to_delete     = 11
+                 devclass_not_existing          = 12
+                 simultanious_set_remove_repair = 13
+                 order_missing                  = 14
+                 no_modification_of_head_syst   = 15
+                 pgmid_object_not_allowed       = 16
+                 masterlanguage_not_specified   = 17
+                 devclass_not_specified         = 18
+                 specify_owner_unique           = 19
+                 loc_priv_objs_no_repair        = 20
+                 gtadir_not_reached             = 21
+                 object_locked_for_order        = 22
+                 change_of_class_not_allowed    = 23
+                 no_change_from_sap_to_tmp      = 24
+                 OTHERS                         = 25.
+    IF sy-subrc <> 0.
+      " TODO
+    ENDIF.
   ENDMETHOD.
 ENDCLASS.
 
-CLASS ltc_app DEFINITION
-    FOR TESTING
-    DURATION SHORT
-    RISK LEVEL HARMLESS
-    FINAL.
+
+CLASS ltc_app DEFINITION FINAL
+  FOR TESTING RISK LEVEL HARMLESS DURATION SHORT.
+
   PRIVATE SECTION.
     METHODS test FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
+
 CLASS ltc_app IMPLEMENTATION.
   METHOD test.
-*    DATA result TYPE lcl_app=>tt_xxxxx.
-*    result = lcl_app=>get_table_field_metadata_2( VALUE #( reptext = 'Seq*' ) ).
-*    result = lcl_app=>get_table_field_metadata_2( VALUE #( fieldname = 'CARRID' ) ).
-*    result = lcl_app=>get_table_field_metadata_2( VALUE #( fieldname = 'CARRID' leng = '3' ) ).
-*    cl_abap_unit_assert=>assert_equals( act = 1
-*                                        exp = 1 ).
   ENDMETHOD.
 ENDCLASS.
